@@ -1565,6 +1565,37 @@ body.product-image-lightbox-open {
 }
 .signup-form form textarea {
     height: 150px;
+    padding-top: 10px;
+}
+
+.signup-form form input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    display: inline-block;
+    margin-right: 6px;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.signup-form form input[type="file"] {
+    height: auto;
+    padding: 8px 10px;
+    line-height: normal;
+}
+
+.signup-form form .account-product-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.signup-form form .account-product-form-actions button,
+.signup-form form .account-product-form-actions .btn {
+    display: inline-block;
+    margin: 0;
+    padding: 8px 25px;
+    border-radius: 0;
 }
 
 .signup-form form .account-product-discount {
@@ -1711,27 +1742,60 @@ body.product-image-lightbox-open {
 #cart_items .cart_info .account-products-table {
     table-layout: fixed;
     width: 100%;
+    margin-bottom: 0;
 }
 
 #cart_items .cart_info .account-products-image-column {
-    width: 25%;
+    width: 18%;
 }
 
 #cart_items .cart_info .account-products-name-column {
-    width: 17.5%;
+    width: 40%;
 }
 
 #cart_items .cart_info .account-products-price-column {
-    width: 30%;
+    width: 22%;
 }
 
 #cart_items .cart_info .account-products-action-column {
-    width: 27.5%;
+    width: 20%;
+}
+
+#cart_items .cart_info .account-products-table tbody td {
+    vertical-align: middle;
+    padding: 15px 12px;
 }
 
 #cart_items .cart_info .account-products-table .cart_product {
     display: table-cell;
     vertical-align: middle;
+    padding-left: 25px;
+}
+
+#cart_items .cart_info .account-products-table .cart_product img {
+    border-radius: 4px;
+    border: 1px solid #eee;
+    display: block;
+}
+
+#cart_items .cart_info .account-products-table .cart_description,
+#cart_items .cart_info .account-products-table .cart_description h4,
+#cart_items .cart_info .account-products-table .cart_description p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+#cart_items .cart_info .account-products-table .cart_description h4 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #363432;
+}
+
+#cart_items .cart_info .account-products-table .cart_description p {
+    margin-bottom: 0;
+    line-height: 1.45;
+    color: #696763;
 }
 
 #cart_items .cart_info .account-products-table .account-products-action-cell {
@@ -1754,26 +1818,6 @@ body.product-image-lightbox-open {
     margin: 0;
 }
 
-#cart_items .cart_info .account-products-original-price {
-    color: #999;
-    font-size: 14px;
-    margin-bottom: 2px;
-    text-decoration: line-through;
-}
-
-#cart_items .cart_info .account-products-discount {
-    color: #e74c3c;
-    font-size: 13px;
-    margin-bottom: 2px;
-}
-
-#cart_items .cart_info .account-products-sale-price {
-    color: #FE980F;
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 0;
-}
-
 #cart_items .cart_info .cart_description h4 {
     margin-bottom: 0
 }
@@ -1791,7 +1835,33 @@ body.product-image-lightbox-open {
 
 #cart_items .cart_info .cart_price p {
     color: #696763;
-    font-size: 18px
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+#cart_items .cart_info .cart_price p.account-products-original-price {
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 4px;
+    text-decoration: line-through;
+}
+
+#cart_items .cart_info .cart_price p.account-products-discount {
+    display: inline-block;
+    background: #fdecea;
+    color: #e74c3c;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+
+#cart_items .cart_info .cart_price p.account-products-sale-price {
+    color: #FE980F;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 0;
 }
 
 #cart_items .cart_info .cart_total_price {

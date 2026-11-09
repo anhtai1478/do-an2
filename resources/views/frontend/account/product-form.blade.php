@@ -156,8 +156,10 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-default">{{ $product->exists ? 'Update' : 'Create' }}</button>
-                <a href="{{ route('account.my-product') }}" class="btn btn-default">Cancel</a>
+                <div class="account-product-form-actions">
+                    <button type="submit" class="btn btn-default">{{ $product->exists ? 'Update' : 'Create' }}</button>
+                    <a href="{{ route('account.my-product') }}" class="btn btn-default">Cancel</a>
+                </div>
             </form>
         </div>
     </div>

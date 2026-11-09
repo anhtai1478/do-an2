@@ -32,8 +32,7 @@
                             <td class="cart_product">
                                 <a href="{{ route('frontend.products.show', $item['id']) }}">
                                     @if (!empty($item['image']))
-                                        <img src="{{ asset('storage/' . $item['image']) }}" alt="{{ $item['name'] }}"
-                                            style="width: 110px; height: 110px; object-fit: cover;">
+                                        <img src="{{ asset('storage/' . $item['image']) }}" alt="{{ $item['name'] }}" style="width: 110px; height: 110px; object-fit: cover;">
                                     @endif
                                 </a>
                             </td>
