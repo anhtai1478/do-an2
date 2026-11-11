@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\frontend\SearchController;
+
+
 
 
 
@@ -27,7 +30,16 @@ Route::get('/', function () {
         ->latest()
         ->take(6)
         ->get();
-    return view('frontend.home.home', compact('product'));
+
+    $categories = Product::whereNotNull('category')
+        ->distinct()
+        ->pluck('category');
+
+    $brands = Product::whereNotNull('brand')
+        ->distinct()
+        ->pluck('brand');
+
+    return view('frontend.home.home', compact('product', 'categories', 'brands'));
 });
 
 
@@ -40,7 +52,25 @@ Route::get('/blogs/{id}', [FrontendBlogController::class, 'show'])
 
 Route::get('/products/{product}', function (Product $product) {
     return view('frontend.products.show', compact('product'));
-})->name('frontend.products.show');
+})->whereNumber('product')
+    ->name('frontend.products.show');
+
+Route::get('/products/search', [SearchController::class, 'searchByName'])
+    ->name('products.search');
+
+Route::post('/products/search', [SearchController::class, 'searchByName'])
+    ->name('products.search.post');
+
+Route::post('/search-advanced', [SearchController::class, 'searchPost'])
+    ->name('search.advanced.post');
+
+Route::get('/search-advanced/{param?}', [SearchController::class, 'searchAdvanced'])
+    ->name('search.advanced');
+
+
+
+
+
 
 // 1. Route mở trang Giỏ hàng (Cho phép cả khách đã login và chưa login)
 Route::get('/cart', function () {

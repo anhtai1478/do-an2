@@ -72,7 +72,8 @@
 								<li><a href="{{ route('login') }}"><i class="fa fa-lock"></i> Login</a></li>
 							@endauth
 							<li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-							<li><a href="{{ route('checkout.index') }}"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+							<li><a href="{{ route('checkout.index') }}"><i class="fa fa-crosshairs"></i> Checkout</a>
+							</li>
 							<li>
 								<a href="{{ route('cart.index') }}">
 									<i class="fa fa-shopping-cart"></i>
@@ -121,12 +122,15 @@
 							</li>
 							<li><a href="404.html">404</a></li>
 							<li><a href="contact-us.html">Contact</a></li>
+							<li><a href="{{ route('search.advanced') }}">Search advanced</a></li>
 						</ul>
 					</div>
 				</div>
 				<div class="col-sm-3">
 					<div class="search_box pull-right">
-						<input type="text" placeholder="Search" />
+						<form action="{{ route('products.search') }}" method="GET">
+							<input type="text" name="search" value="{{ request('search') }}" placeholder="Search" />
+						</form>
 					</div>
 				</div>
 			</div>
