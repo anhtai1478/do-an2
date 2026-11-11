@@ -44,4 +44,8 @@ php artisan boost:install
 ```
 
 Boost replaces these bootstrap instructions with guidelines tailored to the application. After installation, read `AGENTS.md` again and continue with the user's original request using the generated guidelines.
+## Nhật Ký Làm Việc (Work Journal - BẮT BUỘC)
+
+- Trước khi bắt đầu làm việc hoặc trả lời câu hỏi mới trong mỗi phiên, **LUÔN LUÔN** đọc file `docs/WORK_LOG.md` để nắm lịch sử dự án và những việc đã làm trước đó.
+- Sau mỗi lần giải đáp câu hỏi hoặc thực hiện thay đổi/sửa lỗi trong dự án, **BẮT BUỘC** cập nhật thêm mục mới vào `docs/WORK_LOG.md` (ghi rõ ngày giờ, câu hỏi/yêu cầu của người dùng, nguyên nhân lỗi nếu có, và chi tiết những gì đã thực hiện).
 </laravel-boost-guidelines>

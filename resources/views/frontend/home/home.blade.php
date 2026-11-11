@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" id="product-list">
         @forelse ($product as $item)
             <div class="col-sm-4">
                 <div class="product-image-wrapper">

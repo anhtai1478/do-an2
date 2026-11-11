@@ -122,11 +122,12 @@
 							</div>
 						</div><!--/brands_products-->
 
-						<div class="price-range"><!--price-range-->
+						<div class="price-range" data-url="{{ route('search.price.range') }}"><!--price-range-->
 							<h2>Price Range</h2>
 							<div class="well">
-								 <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[250,450]" id="sl2" ><br />
-								 <b>$ 0</b> <b class="pull-right">$ 600</b>
+								 <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[0,600]" data-slider-handle="round" id="sl2" ><br />
+								 <b class="pull-left" id="price-min-label">$ 0</b> <b class="pull-right" id="price-max-label">$ 600</b>
+								 <div class="clearfix"></div>
 							</div>
 						</div><!--/price-range-->
 

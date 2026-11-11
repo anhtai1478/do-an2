@@ -1357,14 +1357,15 @@ body.product-image-lightbox-open {
 
 .product-information span input {
     border: 1px solid #DEDEDC;
+    border-radius: 4px;
     color: #696763;
     font-family: 'Roboto', sans-serif;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     height: 33px;
     outline: medium none;
     text-align: center;
-    width: 50px;
+    width: 60px;
 }
 
 .product-information span label {
@@ -1381,12 +1382,19 @@ body.product-image-lightbox-open {
 .cart {
     background: #FE980F;
     border: 0 none;
-    border-radius: 0;
+    border-radius: 4px;
     color: #FFFFFF;
     font-family: 'Roboto', sans-serif;
     font-size: 15px;
     margin-bottom: 10px;
-    margin-left: 20px;
+    margin-left: 15px;
+    padding: 7px 18px;
+    transition: all 0.2s ease;
+}
+
+.cart:hover {
+    background: #e28004 !important;
+    color: #FFFFFF !important;
 }
 
 .shop-details-tab {

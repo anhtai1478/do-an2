@@ -106,14 +106,77 @@ document.addEventListener("click", async function (event) {
     }
 });
 
-    
+
 
 
 /*price range*/
 
-if ($.fn.slider) {
-    $("#sl2").slider();
-}
+$(document).ready(function () {
+    if ($.fn.slider && $("#sl2").length) {
+        function getSliderValues(ev) {
+            if (ev && ev.value && Array.isArray(ev.value) && ev.value.length >= 2) {
+                return [Number(ev.value[0]), Number(ev.value[1])];
+            }
+            if ($("#sl2").data("slider")) {
+                var sliderVal = $("#sl2").data("slider").getValue();
+                if (Array.isArray(sliderVal) && sliderVal.length >= 2) {
+                    return [Number(sliderVal[0]), Number(sliderVal[1])];
+                }
+            }
+            var rawVal = String($("#sl2").val() || "");
+            if (rawVal.indexOf(",") !== -1) {
+                var parts = rawVal.split(",");
+                return [Number(parts[0]) || 0, Number(parts[1]) || 600];
+            }
+            return [0, 600];
+        }
+
+        function updatePriceLabels(minVal, maxVal) {
+            $("#price-min-label").text("$ " + minVal);
+            $("#price-max-label").text("$ " + maxVal);
+        }
+
+        function filterProductsByPrice(minVal, maxVal) {
+            var searchUrl =
+                $('meta[name="search-price-range-url"]').attr("content") ||
+                $(".price-range").data("url") ||
+                "/search-price-range";
+
+            $.ajax({
+                url: searchUrl,
+                method: "GET",
+                data: {
+                    min: minVal,
+                    max: maxVal,
+                },
+                success: function (response) {
+                    var productList =
+                        document.getElementById("product-list") ||
+                        document.querySelector(".features_items .row");
+
+                    if (productList && response && response.html !== undefined) {
+                        productList.innerHTML = response.html;
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi lọc giá:", error, xhr.responseText);
+                },
+            });
+        }
+
+        $("#sl2")
+            .slider()
+            .on("slide", function (ev) {
+                var vals = getSliderValues(ev);
+                updatePriceLabels(vals[0], vals[1]);
+            })
+            .on("slideStop", function (ev) {
+                var vals = getSliderValues(ev);
+                updatePriceLabels(vals[0], vals[1]);
+                filterProductsByPrice(vals[0], vals[1]);
+            });
+    }
+});
 
 var RGBChange = function () {
     $("#RGB").css(

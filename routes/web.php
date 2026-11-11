@@ -1,24 +1,18 @@
 <?php
 
 use App\Http\Controllers\AccountProductController;
-use App\Models\Product;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\frontend\BlogController as FrontendBlogController;
+use App\Http\Controllers\frontend\SearchController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MailController;
-use App\Http\Controllers\frontend\SearchController;
-
-
-
-
-
-
 
 // login, register, reset password routes
 Auth::routes();
@@ -40,8 +34,9 @@ Route::get('/', function () {
         ->pluck('brand');
 
     return view('frontend.home.home', compact('product', 'categories', 'brands'));
-});
+})->name('frontend.home.home');
 
+Route::redirect('/home', '/');
 
 // blog routes
 Route::get('/blogs', [FrontendBlogController::class, 'index'])
@@ -66,11 +61,8 @@ Route::post('/search-advanced', [SearchController::class, 'searchPost'])
 
 Route::get('/search-advanced/{param?}', [SearchController::class, 'searchAdvanced'])
     ->name('search.advanced');
-
-
-
-
-
+Route::get('/search-price-range',[SearchController::class,'searchByPriceRange'])
+->name('search.price.range');
 
 // 1. Route mở trang Giỏ hàng (Cho phép cả khách đã login và chưa login)
 Route::get('/cart', function () {
@@ -207,6 +199,7 @@ Route::post('/cart/update-ajax', function (Request $request) {
 // 4. Route mở trang Checkout
 Route::get('/checkout', function () {
     $cart = session()->get('cart', []);
+
     return view('frontend.checkout.index', compact('cart'));
 })->name('checkout.index');
 
@@ -214,7 +207,6 @@ Route::get('/checkout', function () {
 Route::post('/checkout/order', [MailController::class, 'order'])->name('checkout.order');
 
 Route::middleware(['auth'])->group(function () {
-
     Route::post('/blog/rate/ajax', [FrontendBlogController::class, 'rate'])
         ->name('frontend.blogs.rate.ajax');
 

@@ -76,7 +76,7 @@
         </div>
 
         {{-- Danh sách sản phẩm tìm được --}}
-        <div class="row">
+        <div class="row" id="product-list">
             @forelse ($products as $item)
                 <div class="col-sm-4">
                     <div class="product-image-wrapper">

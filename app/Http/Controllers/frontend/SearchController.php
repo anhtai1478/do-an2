@@ -78,4 +78,33 @@ class SearchController extends Controller
 
         return view('frontend.products.search-advanced', compact('products', 'categories', 'brands'));
     }
+
+
+    public function searchByPriceRange(Request $request)
+    {
+        $min = (float) $request->input('min', 0);
+        $max = (float) $request->input('max', 600);
+
+        // 2. Dùng SQL WHERE price BETWEEN min AND max để lấy sản phẩm trong khoảng giá
+        $products = Product::whereBetween('price', [$min, $max])
+            ->latest()
+            ->get();
+
+        $html = '';
+
+        foreach ($products as $item) {
+            $html .= view('frontend.products.card', compact('item'))
+                ->render();
+        }
+
+        if ($products->isEmpty()) {
+            $html = '<div class="col-sm-12"><p class="text-center" style="padding: 30px;">Không có sản phẩm nào trong khoảng giá $' . number_format($min, 2) . ' - $' . number_format($max, 2) . '.</p></div>';
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'count' => $products->count(),
+            'html' => $html,
+        ]);
+    }
 }

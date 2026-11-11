@@ -55,9 +55,11 @@
 				this.tooltip.addClass('right')[0].style.left = '100%';
 				break;
 			default:
-				this.picker
-					.addClass('slider-horizontal')
-					.css('width', this.element.outerWidth());
+				var elemWidth = this.element.outerWidth();
+				this.picker.addClass('slider-horizontal');
+				if (elemWidth && elemWidth > 20) {
+					this.picker.css('width', elemWidth);
+				}
 				this.orientation = 'horizontal';
 				this.stylePos = 'left';
 				this.mousePos = 'pageX';
@@ -119,7 +121,7 @@
 		];
 
 		this.offset = this.picker.offset();
-		this.size = this.picker[0][this.sizePos];
+		this.size = this.picker[0][this.sizePos] || this.picker.outerWidth() || 210;
 
 		this.formater = options.formater;
 
@@ -201,7 +203,7 @@
 			}
 
 			this.offset = this.picker.offset();
-			this.size = this.picker[0][this.sizePos];
+			this.size = this.picker[0][this.sizePos] || this.picker.outerWidth() || 210;
 
 			var percentage = this.getPercentage(ev);
 

@@ -8,7 +8,7 @@
         <h2 class="title text-center">
             Search Results {{ $search ? 'for "' . $search . '"' : '' }}
         </h2>
-        <div class="row">
+        <div class="row" id="product-list">
             @forelse ($products as $item)
                 <div class="col-sm-4">
                     <div class="product-image-wrapper">

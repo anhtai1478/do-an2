@@ -37,6 +37,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 ## Documentation Files
 
 - You must only create documentation files if explicitly requested by the user.
+- **Work Journal (`docs/WORK_LOG.md`)**: Always read `docs/WORK_LOG.md` at the beginning of a session to understand the project history, and append a new entry to `docs/WORK_LOG.md` every time you answer a user question or make changes to the project.
 
 === boost rules ===
 
