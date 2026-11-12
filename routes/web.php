@@ -4,6 +4,8 @@ use App\Http\Controllers\AccountProductController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HistoryController as AdminHistoryController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\frontend\BlogController as FrontendBlogController;
 use App\Http\Controllers\frontend\SearchController;
@@ -61,8 +63,8 @@ Route::post('/search-advanced', [SearchController::class, 'searchPost'])
 
 Route::get('/search-advanced/{param?}', [SearchController::class, 'searchAdvanced'])
     ->name('search.advanced');
-Route::get('/search-price-range',[SearchController::class,'searchByPriceRange'])
-->name('search.price.range');
+Route::get('/search-price-range', [SearchController::class, 'searchByPriceRange'])
+    ->name('search.price.range');
 
 // 1. Route mở trang Giỏ hàng (Cho phép cả khách đã login và chưa login)
 Route::get('/cart', function () {
@@ -257,6 +259,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/blogs/{id}/edit', [BlogController::class, 'edit'])->name('admin.blogs.edit');
         Route::put('/admin/blogs/{id}', [BlogController::class, 'update'])->name('admin.blogs.update');
         Route::delete('/admin/blogs/{id}', [BlogController::class, 'delete'])->name('admin.blogs.delete');
+
+        // Users Management
+        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+        Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])->whereNumber('user')->name('admin.users.edit');
+        Route::put('/admin/users/{user}', [UserController::class, 'update'])->whereNumber('user')->name('admin.users.update');
+        Route::delete('/admin/users/{user}', [UserController::class, 'destroy'])->whereNumber('user')->name('admin.users.destroy');
+
+        // Products Management
+        Route::get('/admin/products', [AdminProductController::class, 'index'])->name('admin.products.index');
+        Route::get('/admin/products/{product}/edit', [AdminProductController::class, 'edit'])->whereNumber('product')->name('admin.products.edit');
+        Route::put('/admin/products/{product}', [AdminProductController::class, 'update'])->whereNumber('product')->name('admin.products.update');
+        Route::delete('/admin/products/{product}', [AdminProductController::class, 'destroy'])->whereNumber('product')->name('admin.products.destroy');
+
+        // Histories / Order Management
+        Route::get('/admin/histories', [AdminHistoryController::class, 'index'])->name('admin.histories.index');
+        Route::delete('/admin/histories/{history}', [AdminHistoryController::class, 'destroy'])->whereNumber('history')->name('admin.histories.destroy');
     });
 
     Route::get('/frontend/home', function () {

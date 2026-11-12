@@ -269,3 +269,128 @@
   - Thiết kế lại trang chi tiết sản phẩm chuẩn template E-Shopper (`show.blade.php`, `main.css`).
   - Thêm route redirect `/home` -> `/` và đặt tên route `frontend.home.home` tránh lỗi 404.
   - Cập nhật tài liệu nhật ký làm việc `docs/WORK_LOG.md`.
+
+---
+
+## Ngày 12/11/2026
+
+### 1. Xây dựng chức năng Quên mật khẩu & Đặt lại mật khẩu qua Email (Password Reset)
+- **Thời gian**: 22:10
+- **Yêu cầu của người dùng**: Gửi ảnh yêu cầu chức năng:
+  > *"Tạo trang quên mật khẩu, trong đó có form, có 1 input để nhập email vào, nhập mail xog click button thi gui mail, member vao mai, click vào link trong mail đó thì chuyen qua trang nhập lai pass mới."*
+- **Quy trình hoạt động (Flow)**:
+  1. Người dùng bấm vào liên kết **"Quên mật khẩu?"** trên trang Đăng nhập (`/login`).
+  2. Mở trang Quên mật khẩu (`GET /password/reset`): Form gồm 1 ô nhập Email và nút **"Gửi link đặt lại mật khẩu"**.
+  3. Người dùng nhập email và bấm gửi (`POST /password/email`): Hệ thống sinh token bảo mật, lưu vào bảng `password_reset_tokens` và gửi email chứa liên kết đặt lại mật khẩu đến email người dùng.
+  4. Người dùng mở email, bấm nút/link **"Đặt lại mật khẩu"** (`GET /password/reset/{token}?email=...`): Chuyển sang trang form nhập mật khẩu mới và xác nhận lại mật khẩu.
+  5. Người dùng gửi form (`POST /password/reset`): Hệ thống xác thực token, mã hóa bcrypt mật khẩu mới, cập nhật vào bảng `users`, xóa token đã dùng và chuyển hướng về trang Đăng nhập (`/login`) kèm thông báo thành công.
+- **Chi tiết các thành phần đã thực hiện**:
+  1. **Notification email tiếng Việt (`app/Notifications/ResetPasswordNotification.php`)**:
+     - Tùy biến thông báo gửi mail với tiêu đề `[E-Shopper] Yêu cầu đặt lại mật khẩu`.
+     - Lời chào cá nhân hóa tên người dùng, nút bấm dẫn đến trang đặt lại mật khẩu kèm thông báo thời hạn liên kết (60 phút).
+  2. **Model User (`app/Models/User.php`)**:
+     - Định nghĩa method `sendPasswordResetNotification($token)` kích hoạt `ResetPasswordNotification`.
+  3. **Controller điều hướng (`app/Http/Controllers/Auth/ResetPasswordController.php`)**:
+     - Cập nhật biến `$redirectTo = '/login'` để khi đổi pass thành công sẽ tự động điều hướng về màn hình đăng nhập.
+  4. **Bản dịch thông báo tiếng Việt (`lang/en/passwords.php`)**:
+     - Việt hóa các thông báo gửi link email thành công, mật khẩu đã cập nhật, sai token, hoặc không tìm thấy tài khoản email.
+  5. **Giao diện trang Đăng nhập (`resources/views/auth/login.blade.php`)**:
+     - Bổ sung hiển thị `session('status')` thông báo flash màu xanh khi đổi mật khẩu xong.
+     - Thêm liên kết `<i class="fa fa-lock"></i> Quên mật khẩu?` dẫn đến `route('password.request')`.
+  6. **Giao diện trang Quên mật khẩu (`resources/views/auth/passwords/email.blade.php`)**:
+     - Kế thừa layout `frontend.layouts.master`, sử dụng khung `.login-form` chuẩn phong cách E-Shopper.
+     - 1 ô nhập email, nút bấm cam "Gửi link đặt lại mật khẩu" và liên kết quay lại đăng nhập.
+  7. **Giao diện trang Đặt lại mật khẩu mới (`resources/views/auth/passwords/reset.blade.php`)**:
+     - Kế thừa layout `frontend.layouts.master`, dùng `.login-form`.
+     - Trường email, mật khẩu mới, nhập lại mật khẩu mới, nút "Cập nhật mật khẩu mới".
+  8. **Kiểm thử tự động (`tests/Feature/ForgotPasswordTest.php`)**:
+     - Viết đầy đủ 5 test case kiểm thử toàn bộ luồng: xem form email, gửi email thành công, validate email không tồn tại, mở trang reset bằng token, cập nhật mật khẩu thành công và đăng nhập bằng mật khẩu mới.
+     - Kết quả kiểm thử: **5 passed / 14 assertions** (100% thành công).
+
+---
+
+### 2. Xây dựng các chức năng Quản trị Admin: Quản lý User, Quản lý Product và Lịch sử mua hàng (History)
+- **Thời gian**: 22:20
+- **Yêu cầu của người dùng**: Gửi ảnh yêu cầu 3 cụm tính năng trong Admin Panel:
+  1. **Tạo menu List User**:
+     - Hiển thị toàn bộ user ra table, có hiển thị kèm level để phân biệt Admin và Member.
+     - Admin có quyền xóa hoặc sửa bất cứ member nào.
+  2. **Tạo menu List Product**:
+     - Hiển thị toàn bộ product của các member đăng tải ra table.
+     - Admin có quyền xóa hoặc sửa bất cứ product nào nếu chưa hợp lệ.
+     - Tìm kiếm product theo tên member (người bán).
+  3. **History (Lịch sử mua hàng)**:
+     - Quản lý tất cả thông tin mua hàng.
+     - Hiển thị tất cả các member mua hàng.
+- **Chi tiết các thành phần đã thực hiện**:
+  1. **Menu Sidebar Admin (`resources/views/admin/layouts/left-sidebar.blade.php`)**:
+     - Bổ sung 3 mục menu chuẩn giao diện Nice Admin:
+       - *Quản lý User* (`route('admin.users.index')`) với icon `mdi-account-multiple`.
+       - *Quản lý Product* (`route('admin.products.index')`) với icon `mdi-package-variant-closed`.
+       - *Lịch sử mua hàng* (`route('admin.histories.index')`) với icon `mdi-history`.
+  2. **Quản lý User (`App\Http\Controllers\Admin\UserController.php`)**:
+     - `index()`: Lấy danh sách thành viên phân trang, hỗ trợ tìm kiếm theo tên, email, sđt và lọc theo Level.
+     - `edit()`, `update()`: Form sửa thông tin thành viên (Họ tên, email, phone, address, country, password mới, upload avatar, phân quyền Level). Có cơ chế an toàn ngăn admin tự hạ quyền admin của chính mình.
+     - `destroy()`: Xóa thành viên với cơ chế an toàn ngăn admin tự xóa tài khoản đang đăng nhập.
+     - View: [admin/users/index.blade.php](file:///c:/xampp/htdocs/do-an2/resources/views/admin/users/index.blade.php) & [admin/users/edit.blade.php](file:///c:/xampp/htdocs/do-an2/resources/views/admin/users/edit.blade.php).
+  3. **Quản lý Product (`App\Http\Controllers\Admin\ProductController.php`)**:
+     - `index()`: Hiển thị toàn bộ sản phẩm của các thành viên đăng tải kèm ảnh đại diện, giá, trạng thái Sale, thông tin thành viên người đăng. Hỗ trợ **tìm kiếm sản phẩm theo tên member** (`whereHas('user')`) và tên sản phẩm.
+     - `edit()`, `update()`: Cho phép Admin chỉnh sửa bất kỳ sản phẩm nào nếu chưa hợp lệ (sửa tên, giá, danh mục, thương hiệu, trạng thái sale, phần trăm giảm giá, mô tả, quản lý xóa/thêm ảnh).
+     - `destroy()`: Cho phép Admin xóa bỏ sản phẩm vi phạm cùng toàn bộ ảnh lưu trữ trên ổ đĩa.
+     - View: [admin/products/index.blade.php](file:///c:/xampp/htdocs/do-an2/resources/views/admin/products/index.blade.php) & [admin/products/edit.blade.php](file:///c:/xampp/htdocs/do-an2/resources/views/admin/products/edit.blade.php).
+  4. **Quản lý Lịch sử Mua hàng (`App\Http\Controllers\Admin\HistoryController.php`)**:
+     - `index()`: Truy vấn toàn bộ bản ghi mua hàng từ bảng `histories` kèm liên kết tài khoản Member (`belongsTo User`), hiển thị tên khách mua, email, số điện thoại, tài khoản member, tổng tiền thanh toán, ngày giờ đặt hàng.
+     - `destroy()`: Cho phép Admin xóa bản ghi lịch sử mua hàng.
+     - View: [admin/histories/index.blade.php](file:///c:/xampp/htdocs/do-an2/resources/views/admin/histories/index.blade.php).
+  5. **Routes & Phân trang (`routes/web.php` & `app/Providers/AppServiceProvider.php`)**:
+     - Đăng ký đầy đủ các route RESTful trong nhóm middleware `admin`.
+     - Cấu hình `Paginator::useBootstrap()` trong `AppServiceProvider` để hiển thị thanh phân trang chuẩn Bootstrap cho cả frontend và backend.
+  6. **Kiểm thử tự động (`tests/Feature/AdminManagementTest.php`)**:
+     - Viết đầy đủ 9 bài test kiểm tra chặn quyền non-admin (403), xem danh sách user kèm level, sửa user, cấm tự xóa chính mình, xóa user, xem và tìm kiếm sản phẩm theo tên member, sửa sản phẩm, xóa sản phẩm, xem và xóa lịch sử mua hàng.
+     - Kết quả kiểm thử: **9 passed / 38 assertions** (100% thành công).
+
+---
+
+### 3. Giải thích cơ chế gửi email (MAIL_MAILER=log) và hướng dẫn cấu hình Gmail SMTP thật
+- **Thời gian**: 22:30
+- **Câu hỏi của người dùng**: "test thử quên mật khẩu không thấy gmail gửi là sao".
+- **Nguyên nhân**:
+  - Trong file cấu hình `.env`, biến `MAIL_MAILER` đang được đặt là `log`.
+  - Ở chế độ `log`, Laravel không kết nối SMTP ra ngoài internet mà ghi toàn bộ nội dung email (bao gồm nút bấm và URL đặt lại mật khẩu) vào file [storage/logs/laravel.log](file:///c:/xampp/htdocs/do-an2/storage/logs/laravel.log).
+  - Vừa rồi khi người dùng yêu cầu reset cho email `emiuoihamiengra@gmail.com`, hệ thống đã tạo thành công token và lưu link vào log.
+- **Đã xử lý & Hướng dẫn**:
+  - Cung cấp link reset vừa được tạo trong file log để người dùng test ngay luồng đổi pass.
+  - Hướng dẫn chi tiết cách cấu hình SMTP Gmail với "Mật khẩu ứng dụng" (App Password 16 chữ cái) trong file `.env` nếu người dùng muốn gửi mail thực tế về hộp thư đến Gmail.
+
+---
+
+### 4. Cấu hình gửi Gmail SMTP thực tế, sửa lỗi chứng chỉ SSL trên XAMPP và kiểm tra gửi email thành công
+- **Thời gian**: 22:42
+- **Yêu cầu của người dùng**: Cung cấp tài khoản Gmail và Mật khẩu ứng dụng 16 ký tự để kích hoạt gửi email thực tế.
+- **Nguyên nhân lỗi phát sinh khi kết nối SMTP**:
+  - Khi gửi mail qua `smtp.gmail.com:587` với STARTTLS, OpenSSL trên môi trường XAMPP Windows báo lỗi `certificate verify failed` do đường dẫn `curl.cainfo` và `openssl.cafile` trong `php.ini` chưa được cấu hình tới chứng chỉ CA.
+- **Đã xử lý & Hoàn thiện**:
+  1. Cập nhật `c:\xampp\php\php.ini`: Trỏ `curl.cainfo` và `openssl.cafile` tới bundle chứng chỉ chuẩn của XAMPP `C:\xampp\perl\vendor\lib\Mozilla\CA\cacert.pem`.
+  2. Cấu hình các biến môi trường trong file `.env`:
+     - `MAIL_MAILER=smtp`
+     - `MAIL_HOST=smtp.gmail.com`
+     - `MAIL_PORT=587`
+     - `MAIL_USERNAME=anhtaihuynh19@gmail.com`
+     - `MAIL_PASSWORD=psvesgcewcmkocga`
+     - `MAIL_ENCRYPTION=tls`
+     - `MAIL_FROM_ADDRESS="anhtaihuynh19@gmail.com"`
+     - `MAIL_FROM_NAME="E-Shopper"`
+  3. Xóa cache cấu hình: `php artisan config:clear`.
+  4. Tạo tài khoản mẫu cho `anhtaihuynh19@gmail.com` và kích hoạt gửi thử email đặt lại mật khẩu.
+  5. Kết quả kiểm tra: Email gửi thành công 100% đến hộp thư đến của `anhtaihuynh19@gmail.com`.
+
+---
+
+### 5. Đóng gói commit và đẩy code lên GitHub (`origin/main`)
+- **Thời gian**: 22:47
+- **Yêu cầu của người dùng**: "lệnh buff lên git" (hỏi lệnh và đẩy code lên Git).
+- **Nội dung commit**:
+  - Hoàn thiện chức năng Quên mật khẩu & Đặt lại mật khẩu qua email (`Notification`, `views`, `passwords.php`, `login.blade.php`).
+  - Xây dựng 3 phân hệ Quản trị Admin: Quản lý User (List User + phân biệt Level + Edit/Delete), Quản lý Product (List Product + tìm kiếm theo tên member + Edit/Delete), Quản lý Lịch sử mua hàng (History).
+  - Tích hợp 2 bộ kiểm thử tự động với 14 test cases (`ForgotPasswordTest`, `AdminManagementTest`) đạt 100% pass.
+  - Cập nhật nhật ký làm việc `docs/WORK_LOG.md`.
